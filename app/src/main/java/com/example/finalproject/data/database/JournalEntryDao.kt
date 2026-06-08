@@ -1,37 +1,55 @@
 package com.example.finalproject.data.database
 
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.Query
-import androidx.room.Update
 import com.example.finalproject.data.model.JournalEntry
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 
-@Dao
-interface JournalEntryDao {
+// Simple in-memory DAO - stores all entries in memory
+class JournalEntryDao {
+    private val entries = MutableStateFlow<List<JournalEntry>>(emptyList())
+    private var nextId: Long = 1
     
-    @Insert
-    suspend fun insertEntry(entry: JournalEntry): Long
+    fun getAllEntries(): Flow<List<JournalEntry>> = entries
     
-    @Update
-    suspend fun updateEntry(entry: JournalEntry)
+    suspend fun insertEntry(entry: JournalEntry): Long {
+        val newEntry = entry.copy(id = nextId)
+        entries.value = entries.value + newEntry
+        nextId++
+        return newEntry.id
+    }
     
-    @Delete
-    suspend fun deleteEntry(entry: JournalEntry)
+    suspend fun updateEntry(entry: JournalEntry) {
+        entries.value = entries.value.map { if (it.id == entry.id) entry else it }
+    }
     
-    @Query("SELECT * FROM journal_entries ORDER BY date DESC")
-    fun getAllEntries(): Flow<List<JournalEntry>>
+    suspend fun deleteEntry(entry: JournalEntry) {
+        entries.value = entries.value.filter { it.id != entry.id }
+    }
     
-    @Query("SELECT * FROM journal_entries WHERE id = :id")
-    fun getEntryById(id: Long): Flow<JournalEntry?>
+    fun getEntryById(id: Long): Flow<JournalEntry?> {
+        return kotlinx.coroutines.flow.flow {
+            emit(entries.value.find { it.id == id })
+        }
+    }
     
-    @Query("SELECT * FROM journal_entries WHERE title LIKE '%' || :searchQuery || '%' OR description LIKE '%' || :searchQuery || '%' ORDER BY date DESC")
-    fun searchEntries(searchQuery: String): Flow<List<JournalEntry>>
+    fun searchEntries(searchQuery: String): Flow<List<JournalEntry>> {
+        return kotlinx.coroutines.flow.flow {
+            emit(entries.value.filter {
+                it.title.contains(searchQuery, ignoreCase = true) ||
+                        it.description.contains(searchQuery, ignoreCase = true)
+            })
+        }
+    }
     
-    @Query("SELECT * FROM journal_entries WHERE mood = :mood ORDER BY date DESC")
-    fun getEntriesByMood(mood: String): Flow<List<JournalEntry>>
+    fun getEntriesByMood(mood: String): Flow<List<JournalEntry>> {
+        return kotlinx.coroutines.flow.flow {
+            emit(entries.value.filter { it.mood == mood })
+        }
+    }
     
-    @Query("SELECT * FROM journal_entries WHERE date BETWEEN :startDate AND :endDate ORDER BY date DESC")
-    fun getEntriesByDateRange(startDate: Long, endDate: Long): Flow<List<JournalEntry>>
+    fun getEntriesByDateRange(startDate: Long, endDate: Long): Flow<List<JournalEntry>> {
+        return kotlinx.coroutines.flow.flow {
+            emit(entries.value.filter { it.date in startDate..endDate })
+        }
+    }
 }

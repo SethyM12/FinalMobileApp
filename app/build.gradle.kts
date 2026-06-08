@@ -53,10 +53,6 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     
-    // Room Database (without annotation processor for now)
-    implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.room.ktx)
-    
     // Navigation
     implementation(libs.androidx.navigation.compose)
     
@@ -65,6 +61,9 @@ dependencies {
     
     // Material Icons
     implementation(libs.androidx.compose.material.icons)
+    
+    // SharedPreferences for simple storage
+    implementation("androidx.preference:preference-ktx:1.2.1")
     
     testImplementation(libs.junit)
     androidTestImplementation(platform(libs.androidx.compose.bom))

@@ -5,7 +5,6 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.example.finalproject.data.database.JournalDatabase
 import com.example.finalproject.data.model.JournalEntry
 import com.example.finalproject.data.repository.JournalRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,7 +13,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.File
-import java.util.Calendar
 
 data class JournalUiState(
     val entries: List<JournalEntry> = emptyList(),
@@ -141,8 +139,7 @@ class JournalViewModel(private val repository: JournalRepository, private val co
 class JournalViewModelFactory(private val context: Context) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(JournalViewModel::class.java)) {
-            val database = JournalDatabase.getDatabase(context)
-            val repository = JournalRepository(database.journalEntryDao())
+            val repository = JournalRepository()
             @Suppress("UNCHECKED_CAST")
             return JournalViewModel(repository, context) as T
         }
