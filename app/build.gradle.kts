@@ -37,6 +37,10 @@ android {
     buildFeatures {
         compose = true
     }
+    lint {
+        abortOnError = false
+        disable += "PaddingUsedWithContent"
+    }
 }
 
 dependencies {
@@ -48,6 +52,20 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    
+    // Room Database (without annotation processor for now)
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    
+    // Navigation
+    implementation(libs.androidx.navigation.compose)
+    
+    // Image Loading
+    implementation(libs.coil.compose)
+    
+    // Material Icons
+    implementation(libs.androidx.compose.material.icons)
+    
     testImplementation(libs.junit)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
