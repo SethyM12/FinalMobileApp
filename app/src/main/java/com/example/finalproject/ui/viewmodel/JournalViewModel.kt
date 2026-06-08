@@ -139,7 +139,7 @@ class JournalViewModel(private val repository: JournalRepository, private val co
 class JournalViewModelFactory(private val context: Context) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(JournalViewModel::class.java)) {
-            val repository = JournalRepository()
+            val repository = JournalRepository(context)
             @Suppress("UNCHECKED_CAST")
             return JournalViewModel(repository, context) as T
         }

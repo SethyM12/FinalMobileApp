@@ -1,10 +1,11 @@
 package com.example.finalproject.data.database
 
-// Simple database provider for in-memory storage
+import android.content.Context
+
 object JournalDatabase {
     private var dao: JournalEntryDao? = null
     
-    fun getDao(): JournalEntryDao {
-        return dao ?: JournalEntryDao().also { dao = it }
+    fun getDao(context: Context): JournalEntryDao {
+        return dao ?: JournalEntryDao(context).also { dao = it }
     }
 }

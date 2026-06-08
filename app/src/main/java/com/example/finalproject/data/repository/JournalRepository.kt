@@ -1,11 +1,12 @@
 package com.example.finalproject.data.repository
 
+import android.content.Context
 import com.example.finalproject.data.database.JournalDatabase
 import com.example.finalproject.data.model.JournalEntry
 import kotlinx.coroutines.flow.Flow
 
-class JournalRepository {
-    private val dao = JournalDatabase.getDao()
+class JournalRepository(context: Context) {
+    private val dao = JournalDatabase.getDao(context)
     
     fun getAllEntries(): Flow<List<JournalEntry>> = dao.getAllEntries()
     
